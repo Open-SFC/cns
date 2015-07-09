@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% block title %}{% trans "Openflow Controller Detail"%}{% endblock %}
+
+{% block page_header %}
+  {% include "horizon/common/_page_header.html" with title=_("Openflow Controller Detail: ")|add:controller.name %}
+{% endblock page_header %}
+
+{% block main %}
+  {% include "admin/ofclusters/_switch_overview.html" %}
+  <hr>
+  <div id="switches">
+    {{ table.render }}
+  </div>
+ 
+{% endblock %}
