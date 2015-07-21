@@ -16,7 +16,7 @@
 # vim: tabstop=4 shiftwidth=4 softtabstop=4
 
 import logging
-from crdclient.v2_0 import client as crd_client
+from nscs.crdclient.v2_0 import client as crd_client
 
 _logger = logging.getLogger(__name__)
 

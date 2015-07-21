@@ -44,6 +44,9 @@ class CNSConsumerPlugin(proxy.RpcProxy):
     def init_consumer(self, consumer=None):
         delta_msg = {}
         delta_msg = self.call(self.consumer_context,self.make_msg('cns_init_consumer',consumer=consumer),self.listener_topic)
+        time.sleep(2)
+        delta_msg = self.call(self.consumer_context,self.make_msg('cns_init_consumer',consumer=consumer),self.listener_topic)
+
         return delta_msg
         
     
