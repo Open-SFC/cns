@@ -16,13 +16,13 @@
 
 from abc import abstractmethod
 
-from nscs.crdserver.api.v2 import attributes as attr
-from nscs.crdserver.api.v2 import base
-from nscs.crdserver.api import extensions
-from nscs.crdserver.common import exceptions as qexception
-from nscs.crdserver import manager
-from nscs.crdserver.openstack.common import log as logging
-from nscs.crdserver.plugins.services.service_base import ServicePluginBase
+from nscs.crdservice.api.v2 import attributes as attr
+from nscs.crdservice.api.v2 import base
+from nscs.crdservice.api import extensions
+from nscs.crdservice.common import exceptions as qexception
+from nscs.crdservice import manager
+from nscs.crdservice.openstack.common import log as logging
+from nscs.crdservice.plugins.services.service_base import ServicePluginBase
 LOG = logging.getLogger(__name__)
 
 OVS_PLURALS = {

@@ -12,20 +12,20 @@
 #    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 #    License for the specific language governing permissions and limitations
 #    under the License.
-from nscs.crdserver.db import db_base_plugin_v2
+from nscs.crdservice.db import db_base_plugin_v2
 import sqlalchemy as sa
 from sqlalchemy import orm
 from sqlalchemy.orm import exc, relationship, backref
 import netaddr
-from nscs.crdserver.db import sqlalchemyutils
-from nscs.crdserver.api.v2 import attributes
-from nscs.crdserver.common import exceptions as q_exc
-from nscs.crdserver.db import model_base
-from nscs.crdserver.openstack.common import log as logging
-from nscs.crdserver.openstack.common import uuidutils
-from nscs.crdserver.common import utils
-from nscs.crdserver.openstack.common import timeutils
-from nscs.crdserver.db import api as db
+from nscs.crdservice.db import sqlalchemyutils
+from nscs.crdservice.api.v2 import attributes
+from nscs.crdservice.common import exceptions as q_exc
+from nscs.crdservice.db import model_base
+from nscs.crdservice.openstack.common import log as logging
+from nscs.crdservice.openstack.common import uuidutils
+from nscs.crdservice.common import utils
+from nscs.crdservice.openstack.common import timeutils
+from nscs.crdservice.db import api as db
 from oslo.config import cfg
 import datetime
 import uuid
@@ -51,7 +51,7 @@ class HasId(object):
     
 
     
-class crd_compute_delta(model_base.BASEV2, HasId):
+class cns_compute_delta(model_base.BASEV2, HasId):
     compute_id = sa.Column(sa.Integer, nullable=False)
     hostname = sa.Column(sa.String(255), nullable=False)
     ip_address = sa.Column(sa.String(64))
@@ -68,7 +68,7 @@ class crd_compute_delta(model_base.BASEV2, HasId):
     logged_at = sa.Column(sa.DateTime, default=datetime.datetime.now, nullable=False)
     version_id = sa.Column(sa.Integer, sa.ForeignKey('crd_versions.runtime_version'), nullable=False)
     
-class crd_network_delta(model_base.BASEV2, HasId, HasTenant):
+class cns_network_delta(model_base.BASEV2, HasId, HasTenant):
     """Represents a v2 neutron network."""
     name = sa.Column(sa.String(255))
     network_id = sa.Column(sa.String(36), nullable=False)
@@ -85,7 +85,7 @@ class crd_network_delta(model_base.BASEV2, HasId, HasTenant):
     version_id = sa.Column(sa.Integer, sa.ForeignKey('crd_versions.runtime_version'), nullable=False)
     
     
-class crd_subnet_delta(model_base.BASEV2, HasId, HasTenant):
+class cns_subnet_delta(model_base.BASEV2, HasId, HasTenant):
     name = sa.Column(sa.String(255))
     subnet_id = sa.Column(sa.String(36), nullable=False)
     network_id = sa.Column(sa.String(36))
@@ -100,7 +100,7 @@ class crd_subnet_delta(model_base.BASEV2, HasId, HasTenant):
     logged_at = sa.Column(sa.DateTime, default=datetime.datetime.now, nullable=False)
     version_id = sa.Column(sa.Integer, sa.ForeignKey('crd_versions.runtime_version'), nullable=False)
     
-class crd_port_delta(model_base.BASEV2, HasId, HasTenant):
+class cns_port_delta(model_base.BASEV2, HasId, HasTenant):
     name = sa.Column(sa.String(255))
     port_id = sa.Column(sa.String(36), nullable=False)
     network_id = sa.Column(sa.String(36))
@@ -117,7 +117,7 @@ class crd_port_delta(model_base.BASEV2, HasId, HasTenant):
     logged_at = sa.Column(sa.DateTime, default=datetime.datetime.now, nullable=False)
     version_id = sa.Column(sa.Integer, sa.ForeignKey('crd_versions.runtime_version'), nullable=False)
     
-class crd_instance_delta(model_base.BASEV2, HasId, HasTenant):
+class cns_instance_delta(model_base.BASEV2, HasId, HasTenant):
     display_name = sa.Column(sa.String(255))
     instance_id = sa.Column(sa.String(36))
     user_id = sa.Column(sa.String(36))
@@ -132,7 +132,7 @@ class crd_instance_delta(model_base.BASEV2, HasId, HasTenant):
     logged_at = sa.Column(sa.DateTime, default=datetime.datetime.now, nullable=False)
     version_id = sa.Column(sa.Integer, sa.ForeignKey('crd_versions.runtime_version'), nullable=False)
     
-class crd_nwport_delta(model_base.BASEV2, HasId):
+class cns_nwport_delta(model_base.BASEV2, HasId):
     nwport_id = sa.Column(sa.String(36))
     name = sa.Column(sa.String(255), nullable=False)
     network_type = sa.Column(sa.String(64))
@@ -172,7 +172,7 @@ class CnsDeltaDb(db_base_plugin_v2.CrdDbPluginV2):
         
         
     def get_network_deltas(self, context, filters=None, fields=None):
-        return self._get_collection(context, crd_network_delta,
+        return self._get_collection(context, cns_network_delta,
                                     self._make_network_delta_dict,
                                     filters=filters, fields=fields)
         
@@ -184,7 +184,7 @@ class CnsDeltaDb(db_base_plugin_v2.CrdDbPluginV2):
         tenant_id=networkdelta['tenant_id']
         with context.session.begin(subtransactions=True):
             version_id = self.create_version(context, tenant_id)
-            network_delta = crd_network_delta(id=str(uuid.uuid4()),
+            network_delta = cns_network_delta(id=str(uuid.uuid4()),
                                         tenant_id=networkdelta['tenant_id'],
                                         name=networkdelta['name'],
                                         network_type=networkdelta['network_type'],
@@ -222,7 +222,7 @@ class CnsDeltaDb(db_base_plugin_v2.CrdDbPluginV2):
         
         
     def get_subnet_deltas(self, context, filters=None, fields=None):
-        return self._get_collection(context, crd_subnet_delta,
+        return self._get_collection(context, cns_subnet_delta,
                                     self._make_subnet_delta_dict,
                                     filters=filters, fields=fields)
     def create_subnet_delta(self, context, subnet):
@@ -232,7 +232,7 @@ class CnsDeltaDb(db_base_plugin_v2.CrdDbPluginV2):
         tenant_id=subnetdelta['tenant_id']
         with context.session.begin(subtransactions=True):
             version_id = self.create_version(context, tenant_id)
-            subnet_delta = crd_subnet_delta(id=str(uuid.uuid4()),
+            subnet_delta = cns_subnet_delta(id=str(uuid.uuid4()),
                                         tenant_id=subnetdelta['tenant_id'],
                                         name=subnetdelta['name'],
                                         subnet_id=subnetdelta['subnet_id'],
@@ -274,7 +274,7 @@ class CnsDeltaDb(db_base_plugin_v2.CrdDbPluginV2):
         
         
     def get_port_deltas(self, context, filters=None, fields=None):
-        return self._get_collection(context, crd_port_delta,
+        return self._get_collection(context, cns_port_delta,
                                     self._make_port_delta_dict,
                                     filters=filters, fields=fields)
     def create_port_delta(self, context, port):
@@ -284,7 +284,7 @@ class CnsDeltaDb(db_base_plugin_v2.CrdDbPluginV2):
         tenant_id=portdelta['tenant_id']
         with context.session.begin(subtransactions=True):
             version_id = self.create_version(context, tenant_id)
-            port_delta = crd_port_delta(id=str(uuid.uuid4()),
+            port_delta = cns_port_delta(id=str(uuid.uuid4()),
                                         tenant_id=portdelta['tenant_id'],
                                         name=portdelta['name'],
                                         port_id=portdelta['port_id'],
@@ -326,7 +326,7 @@ class CnsDeltaDb(db_base_plugin_v2.CrdDbPluginV2):
         
         
     def get_compute_deltas(self, context, filters=None, fields=None):
-        return self._get_collection(context, crd_compute_delta,
+        return self._get_collection(context, cns_compute_delta,
                                     self._make_compute_delta_dict,
                                     filters=filters, fields=fields)
     
@@ -335,7 +335,7 @@ class CnsDeltaDb(db_base_plugin_v2.CrdDbPluginV2):
         LOG.debug(_('create_compute_delta db %s'), str(computedelta))
         with context.session.begin(subtransactions=True):
             version_id = self.create_version(context, 'Nova')
-            compute_delta = crd_compute_delta(id=str(uuid.uuid4()),
+            compute_delta = cns_compute_delta(id=str(uuid.uuid4()),
                                         compute_id = computedelta['compute_id'],
                                         hostname = computedelta['hostname'],
                                         ip_address = computedelta['ip_address'],
@@ -375,7 +375,7 @@ class CnsDeltaDb(db_base_plugin_v2.CrdDbPluginV2):
         
         
     def get_instance_deltas(self, context, filters=None, fields=None):
-        return self._get_collection(context, crd_instance_delta,
+        return self._get_collection(context, cns_instance_delta,
                                     self._make_instance_delta_dict,
                                     filters=filters, fields=fields)
     
@@ -386,7 +386,7 @@ class CnsDeltaDb(db_base_plugin_v2.CrdDbPluginV2):
         tenant_id=instancedelta['tenant_id']
         with context.session.begin(subtransactions=True):
             version_id = self.create_version(context, tenant_id)
-            instance_delta = crd_instance_delta(id=str(uuid.uuid4()),
+            instance_delta = cns_instance_delta(id=str(uuid.uuid4()),
                                         tenant_id = instancedelta['tenant_id'],
                                         display_name = instancedelta['display_name'],
                                         instance_id = instancedelta['instance_id'],
@@ -429,7 +429,7 @@ class CnsDeltaDb(db_base_plugin_v2.CrdDbPluginV2):
         
         
     def get_nwport_deltas(self, context, filters=None, fields=None):
-        return self._get_collection(context, crd_nwport_delta,
+        return self._get_collection(context, cns_nwport_delta,
                                     self._make_nwport_delta_dict,
                                     filters=filters, fields=fields)
     
@@ -438,7 +438,7 @@ class CnsDeltaDb(db_base_plugin_v2.CrdDbPluginV2):
         LOG.debug(_('create_nwport_delta db %s'), str(nwportdelta))
         with context.session.begin(subtransactions=True):
             version_id = self.create_version(context, 'Nova')
-            nwport_delta = crd_nwport_delta(id=str(uuid.uuid4()),
+            nwport_delta = cns_nwport_delta(id=str(uuid.uuid4()),
                                         nwport_id = nwportdelta['id'],
                                         name = nwportdelta['name'],
                                         network_type = nwportdelta['network_type'],

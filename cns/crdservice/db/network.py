@@ -12,13 +12,13 @@
 #    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 #    License for the specific language governing permissions and limitations
 #    under the License.
-from nscs.crdserver.db import db_base_plugin_v2
+from nscs.crdservice.db import db_base_plugin_v2
 import sqlalchemy as sa
 from sqlalchemy.orm import exc
-from nscs.crdserver.common import exceptions as q_exc
-from nscs.crdserver.db import model_base
-from nscs.crdserver.openstack.common import log as logging
-from nscs.crdserver.openstack.common import uuidutils
+from nscs.crdservice.common import exceptions as q_exc
+from nscs.crdservice.db import model_base
+from nscs.crdservice.openstack.common import log as logging
+from nscs.crdservice.openstack.common import uuidutils
 
 
 LOG = logging.getLogger(__name__)
@@ -41,7 +41,7 @@ class HasId(object):
 
 class CrdNetwork(model_base.BASEV2, HasId, HasTenant):
     """Represents a v2 neutron network."""
-    __tablename__ = "crd_networks"
+    __tablename__ = "cns_networks"
 
     name = sa.Column(sa.String(255))
     network_id = sa.Column(sa.String(36), nullable=False)
@@ -55,7 +55,7 @@ class CrdNetwork(model_base.BASEV2, HasId, HasTenant):
 
 
 class CrdSubnet(model_base.BASEV2, HasId, HasTenant):
-    __tablename__ = "crd_subnets"
+    __tablename__ = "cns_subnets"
 
     name = sa.Column(sa.String(255))
     subnet_id = sa.Column(sa.String(36), nullable=False)
@@ -69,7 +69,7 @@ class CrdSubnet(model_base.BASEV2, HasId, HasTenant):
 
 
 class CrdPort(model_base.BASEV2, HasId):
-    __tablename__ = "crd_ports"
+    __tablename__ = "cns_ports"
 
     tenant_id = sa.Column(sa.String(255))
     name = sa.Column(sa.String(255))

@@ -12,20 +12,20 @@
 #    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 #    License for the specific language governing permissions and limitations
 #    under the License.
-from nscs.crdserver.db import db_base_plugin_v2
+from nscs.crdservice.db import db_base_plugin_v2
 import sqlalchemy as sa
 from sqlalchemy import orm
 from sqlalchemy.orm import exc, relationship, backref
 import netaddr
-from nscs.crdserver.db import sqlalchemyutils
-from nscs.crdserver.api.v2 import attributes
-from nscs.crdserver.common import exceptions as q_exc
-from nscs.crdserver.db import model_base
-from nscs.crdserver.openstack.common import log as logging
-from nscs.crdserver.openstack.common import uuidutils
-from nscs.crdserver.common import utils
-from nscs.crdserver.openstack.common import timeutils
-from nscs.crdserver.db import api as db
+from nscs.crdservice.db import sqlalchemyutils
+from nscs.crdservice.api.v2 import attributes
+from nscs.crdservice.common import exceptions as q_exc
+from nscs.crdservice.db import model_base
+from nscs.crdservice.openstack.common import log as logging
+from nscs.crdservice.openstack.common import uuidutils
+from nscs.crdservice.common import utils
+from nscs.crdservice.openstack.common import timeutils
+from nscs.crdservice.db import api as db
 import datetime
 import uuid
 
@@ -50,7 +50,7 @@ class HasId(object):
                    default=uuidutils.generate_uuid)
     
 
-class crd_compute(model_base.BASEV2, HasId):
+class cns_compute(model_base.BASEV2, HasId):
     compute_id = sa.Column(sa.Integer, nullable=False)
     hostname = sa.Column(sa.String(255), nullable=False)
     ip_address = sa.Column(sa.String(64))
@@ -65,7 +65,7 @@ class crd_compute(model_base.BASEV2, HasId):
     status = sa.Column(sa.String(16))
     
     
-class crd_instance(model_base.BASEV2, HasId, HasTenant):
+class cns_instance(model_base.BASEV2, HasId, HasTenant):
     display_name = sa.Column(sa.String(255))
     instance_id = sa.Column(sa.String(36), nullable=False)
     user_id = sa.Column(sa.String(36))
@@ -79,7 +79,7 @@ class crd_instance(model_base.BASEV2, HasId, HasTenant):
     
 class OpenflowCluster(model_base.BASEV2):
     """Represents Openflow Cluster in Db mode """
-    __tablename__ = 'crd_openflow_cluster'
+    __tablename__ = 'cns_openflow_cluster'
 
     id = sa.Column(sa.String(255), nullable=False, primary_key=True)
     name = sa.Column(sa.String(255))
@@ -94,14 +94,14 @@ class OpenflowCluster(model_base.BASEV2):
 
 class OpenflowController(model_base.BASEV2):
     """Represents Openflow Controller in Db mode """
-    __tablename__ = 'crd_openflow_controller'
+    __tablename__ = 'cns_openflow_controller'
 
     id = sa.Column(sa.String(255), nullable=False, primary_key=True)
     name = sa.Column(sa.String(255))
     ip_address = sa.Column(sa.String(64), unique=True)
     port = sa.Column(sa.String(4))
     cell = sa.Column(sa.String(255))
-    cluster_id = sa.Column(sa.String(36), sa.ForeignKey("crd_openflow_cluster.id"),nullable=False)
+    cluster_id = sa.Column(sa.String(36), sa.ForeignKey("cns_openflow_cluster.id"),nullable=False)
     status = sa.Column(sa.String(16))
     created_at = sa.Column(sa.String(255))
     deleted_at = sa.Column(sa.String(255))
@@ -110,7 +110,7 @@ class OpenflowController(model_base.BASEV2):
 
 class OpenflowSwitch(model_base.BASEV2):
     """Represents Openflow Cluster in Db mode """
-    __tablename__ = 'crd_openflow_logicalswitch'
+    __tablename__ = 'cns_openflow_logicalswitch'
 
     id = sa.Column(sa.String(255), nullable=False, primary_key=True)
     datapath_id = sa.Column(sa.String(32))
@@ -126,7 +126,7 @@ class OpenflowSwitch(model_base.BASEV2):
     controller_id = sa.Column(sa.String(255))
     
 
-class crd_nwport(model_base.BASEV2, HasId):
+class cns_nwport(model_base.BASEV2, HasId):
     name = sa.Column(sa.String(255), nullable=False)
     network_type = sa.Column(sa.String(64))
     ip_address = sa.Column(sa.String(64))
@@ -163,7 +163,7 @@ class NovaDb(db_base_plugin_v2.CrdDbPluginV2):
     def create_compute(self, context, compute):
         n = compute['compute']
         with context.session.begin(subtransactions=True):
-            compute = crd_compute(id=n['compute_id'],
+            compute = cns_compute(id=n['compute_id'],
                                         compute_id = n['compute_id'],
                                         hostname = n['hostname'],
                                         ip_address = n['ip_address'],
@@ -186,14 +186,14 @@ class NovaDb(db_base_plugin_v2.CrdDbPluginV2):
         
     
     def get_computes(self, context, filters=None, fields=None):
-        return self._get_collection(context, crd_compute,
+        return self._get_collection(context, cns_compute,
                                     self._make_compute_dict,
                                     filters=filters, fields=fields)
         
     def _get_compute(self, context, id):
         try:
-            query = context.session.query(crd_compute)
-            compute = query.filter(crd_compute.compute_id == id).one()
+            query = context.session.query(cns_compute)
+            compute = query.filter(cns_compute.compute_id == id).one()
         except exc.NoResultFound:
             raise q_exc.ComputeNotFound(compute_id=id)
             #return False
@@ -237,7 +237,7 @@ class NovaDb(db_base_plugin_v2.CrdDbPluginV2):
     def create_instance(self, context, instance):
         n = instance['instance']
         with context.session.begin(subtransactions=True):
-            instance = crd_instance(id=n['instance_id'],
+            instance = cns_instance(id=n['instance_id'],
                                         tenant_id = n['tenant_id'],
                                         display_name = n['display_name'],
                                         instance_id = n['instance_id'],
@@ -259,14 +259,14 @@ class NovaDb(db_base_plugin_v2.CrdDbPluginV2):
         
     
     def get_instances(self, context, filters=None, fields=None):
-        return self._get_collection(context, crd_instance,
+        return self._get_collection(context, cns_instance,
                                     self._make_instance_dict,
                                     filters=filters, fields=fields)
         
     def _get_instance(self, context, id):
         try:
-            query = context.session.query(crd_instance)
-            instance = query.filter(crd_instance.instance_id == id).one()
+            query = context.session.query(cns_instance)
+            instance = query.filter(cns_instance.instance_id == id).one()
         except exc.NoResultFound:
             raise q_exc.InstanceNotFound(instance_id=id)
             #return False
@@ -618,7 +618,7 @@ class NovaDb(db_base_plugin_v2.CrdDbPluginV2):
     def create_nwport(self, context, nwport):
         n = nwport['nwport']
         with context.session.begin(subtransactions=True):
-            nwport = crd_nwport(id=str(uuid.uuid4()),
+            nwport = cns_nwport(id=str(uuid.uuid4()),
                                 name=n['name'],
                                 network_type=n['network_type'],
                                 ip_address=n['ip_address'],
@@ -639,7 +639,7 @@ class NovaDb(db_base_plugin_v2.CrdDbPluginV2):
         return self._make_nwport_dict(nwport, fields)
     
     def get_nwports(self, context, filters=None, fields=None):
-        return self._get_collection(context, crd_nwport,
+        return self._get_collection(context, cns_nwport,
                                     self._make_nwport_dict,
                                     filters=filters, fields=fields)
         
