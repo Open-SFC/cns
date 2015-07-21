@@ -1,1 +1,0 @@
-Core Network Service for Network Service Configuration Stack - Initial Check-ins.
