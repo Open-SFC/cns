@@ -319,6 +319,7 @@ class NovaListener(proxy.RpcProxy):
 		
 
     def create_instance_notification(self, payload):
+	nt = self.novaclient()
         LOG.debug(_("Instance Payload %s....\n"), str(payload))
         n = payload
         state = n['state']
@@ -326,9 +327,14 @@ class NovaListener(proxy.RpcProxy):
         old_task_state = n['old_task_state']
         instance_id = n['instance_id']
         vm_type = 'VM_TYPE_NORMAL_APPLICATION'
+	zone = None
+	
         if 'metadata' in n:
             if 'vmtype' in n['metadata']:
                 vm_type = 'VM_TYPE_NETWORK_SERVICE'
+	    if 'zone' in n['metadata']:
+                zone = n['metadata']['zone']
+
         instancedata = {'instance':
                             {
                                 'tenant_id': n['tenant_id'],
@@ -342,6 +348,7 @@ class NovaListener(proxy.RpcProxy):
                                 'reservation_id': n['reservation_id'],
                                 'host': n['host'],
                                 'type': vm_type,
+				'zone': zone,
                             }
         }
         try:

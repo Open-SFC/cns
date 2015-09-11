@@ -172,9 +172,3 @@ class CnsDelta(object):
             
         LOG.debug(_("Delta to consumer from CNS = %s"),str(delta))
         return delta
-        
-        
-        
-        
-        
-    

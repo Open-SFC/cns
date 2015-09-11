@@ -128,6 +128,8 @@ class cns_instance_delta(model_base.BASEV2, HasId, HasTenant):
     host = sa.Column(sa.String(50))
     type = sa.Column(sa.String(50))
     reservation_id = sa.Column(sa.String(50))
+    zone = sa.Column(sa.String(255),
+                     nullable=True)
     operation = sa.Column(sa.String(255), nullable=False)
     logged_at = sa.Column(sa.DateTime, default=datetime.datetime.now, nullable=False)
     version_id = sa.Column(sa.Integer, sa.ForeignKey('crd_versions.runtime_version'), nullable=False)
@@ -368,6 +370,7 @@ class CnsDeltaDb(db_base_plugin_v2.CrdDbPluginV2):
                'host': instancedelta['host'],
                'type': instancedelta['type'],
                'reservation_id': instancedelta['reservation_id'],
+               'zone': instancedelta['zone'],
                'operation': instancedelta['operation'],
                'logged_at': instancedelta['logged_at'],
                'version_id': instancedelta['version_id']}
@@ -398,6 +401,7 @@ class CnsDeltaDb(db_base_plugin_v2.CrdDbPluginV2):
                                         host = instancedelta['host'],
                                         type = instancedelta['type'],
                                         reservation_id = instancedelta['reservation_id'],
+                                        zone = instancedelta['zone'],
                                         operation = instancedelta['operation'],
                                         logged_at = datetime.datetime.now(),
                                         version_id = version_id)

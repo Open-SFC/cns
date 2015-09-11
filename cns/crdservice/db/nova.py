@@ -76,6 +76,8 @@ class cns_instance(model_base.BASEV2, HasId, HasTenant):
     host = sa.Column(sa.String(50))
     type = sa.Column(sa.String(50))
     reservation_id = sa.Column(sa.String(50))
+    zone = sa.Column(sa.String(255),
+                     nullable=True)
     
 class OpenflowCluster(model_base.BASEV2):
     """Represents Openflow Cluster in Db mode """
@@ -231,7 +233,8 @@ class NovaDb(db_base_plugin_v2.CrdDbPluginV2):
                'launched_at': instance['launched_at'],
                'host': instance['host'],
                'type': instance['type'],
-               'reservation_id': instance['reservation_id']}
+               'reservation_id': instance['reservation_id'],
+               'zone': instance['zone']}
         return self._fields(res, fields)
         
     def create_instance(self, context, instance):
@@ -248,7 +251,8 @@ class NovaDb(db_base_plugin_v2.CrdDbPluginV2):
                                         launched_at = n['launched_at'],
                                         host = n['host'],
                                         type = n['type'],
-                                        reservation_id = n['reservation_id']
+                                        reservation_id = n['reservation_id'],
+                                        zone = n['zone'],
                                         )
             context.session.add(instance)
         return self._make_instance_dict(instance)

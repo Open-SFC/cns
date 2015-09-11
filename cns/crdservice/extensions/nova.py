@@ -115,6 +115,8 @@ RESOURCE_ATTRIBUTE_MAP = {
         'reservation_id': { 'allow_post': True,'allow_put': True,
                         'is_visible': True,'default': ''
                       },
+        'zone': {'allow_post': True, 'allow_put': False,
+                 'default': None, 'is_visible': True},
         'tenant_id': {'allow_post': True, 'allow_put': False,
                       'required_by_policy': True,'validate': {'type:string': None},
                         'is_visible': True
