@@ -82,6 +82,7 @@ class VirtualMachines(Base):
     state = Column(String(255))
     user_id = Column(String(36))
     reservation_id = Column(String(50))
+    zone = Column(String(50))
 
 
 class Ports(Base):
@@ -435,7 +436,8 @@ class CNSDBMixin(object):
                                         host=row.host,
                                         user_id=row.user_id,
                                         reservation_id=row.reservation_id,
-                                        type=row.type)
+                                        type=row.type,
+                                        zone=row.zone)
 
     def create_virtualmachine(self, vm):
         """

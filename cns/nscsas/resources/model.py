@@ -25,7 +25,8 @@ class VirtualNetwork(Model):
     """
 
     def __init__(self, id, name, tenant,
-                 type, segmentation_id, vxlan_service_port, status, state, external):
+                 type, segmentation_id, vxlan_service_port, status, state,
+                 external):
         Model.__init__(
             self,
             id=id,
@@ -108,7 +109,8 @@ class VirtualMachine(Model):
     :param state_description: Virtual machine state description
     """
     def __init__(self, id, name, state, tenant, created_at, host, type,
-                 user_id, reservation_id, state_description='', launched_at=None):
+                 user_id, reservation_id, state_description='',
+                 launched_at=None, zone='default'):
         Model.__init__(
             self,
             id=id,
@@ -121,7 +123,8 @@ class VirtualMachine(Model):
             user_id=user_id,
             reservation_id=reservation_id,
             state_description=state_description,
-            type=type
+            type=type,
+            zone=zone
         )
 
 
@@ -134,7 +137,8 @@ class Port(Model):
     :param state: Port admin State (True / False)
     :param tenant: Tenant ID to which the port belongs
     :param type: port type
-    :param host: Compute Node address / IP where the virtual Machine is brought up
+    :param host: Compute Node address / IP where the virtual Machine is brought
+           up
     :param mac_address: User ID who created the virtual machine
     :param ip_address:
     :param status: Port status (active / inactive)
@@ -175,10 +179,12 @@ class Domain(Model):
     :param subject: Domain Subject name
     """
 
-    def __init__(self, name, id=None, subject='', ttp_name='DATA_CENTER_VIRTUAL_SWITCH_TTP'):
+    def __init__(self, name, id=None, subject='',
+                 ttp_name='DATA_CENTER_VIRTUAL_SWITCH_TTP'):
         if not id:
             id = uuidutils.generate_uuid()
-        Model.__init__(self, id=id, name=name, subject=subject, ttp_name=ttp_name)
+        Model.__init__(self, id=id, name=name, subject=subject,
+                       ttp_name=ttp_name)
 
 
 class Switch(Model):
@@ -192,7 +198,8 @@ class Switch(Model):
     :param baddr: Is Switch Binary IPv4 / IPv6 Address
     :param ip_address: Switch IP Address
     """
-    def __init__(self, name, fqdn, type=False, baddr=False, ip_address='', id=None):
+    def __init__(self, name, fqdn, type=False, baddr=False, ip_address='',
+                 id=None):
         if not id:
             id = uuidutils.generate_uuid()
         Model.__init__(
@@ -217,7 +224,8 @@ class Datapath(Model):
     :param switchname: Switch name
     :param domainname: Domain name
     """
-    def __init__(self, id, name, subject, switch, domain, switchname='', domainname=''):
+    def __init__(self, id, name, subject, switch, domain, switchname='',
+                 domainname=''):
         Model.__init__(
             self,
             id=id,

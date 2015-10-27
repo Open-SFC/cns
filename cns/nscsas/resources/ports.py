@@ -98,11 +98,16 @@ class PortResp(_Base):
 
 class PortController(BaseController):
     ATTRIBUTES = {
-        'portname':          ['name', {'type': 'string', 'mandatory': True, 'key': True}],
+        'portname':          ['name', {'type': 'string', 'mandatory': True,
+                                       'key': True}],
         'porttype':          ['type', {'type': 'string', 'mandatory': True}],
-        'vmname':            ['instance', {'type': 'string', 'mandatory': True}],
+        'vmname':            ['instance', {'type': 'string',
+                                           'mandatory': True}],
         'bridgename':        ['bridge', {'type': 'string', 'mandatory': True}],
-        'vmportmacaddr':     ['mac_address', {'type': 'string', 'mandatory': True}],
+        'vmportmacaddr':     ['mac_address', {'type': 'string',
+                                              'mandatory': True}],
+        'vm_port_ip':        ['ip_address', {'type': 'ipaddr',
+                                             'mandatory': True}]
     }
     dmpath = 'crm.virtualnetwork{%s}.computenodes{%s}.vmsideports'
     attributes = AttributeController(dmpath)

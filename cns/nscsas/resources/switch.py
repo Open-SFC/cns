@@ -2,7 +2,7 @@ import wsme
 from pecan import request, response
 from wsme import types as wtypes
 import wsmeext.pecan as wsme_pecan
-from oslo.config import cfg
+from oslo_config import cfg
 
 from nscs.nscsas.api.resources.base import BaseController, _Base, IP, \
     BoundedStr, EntityNotFound

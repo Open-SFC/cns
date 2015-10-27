@@ -176,6 +176,7 @@ class CNSConsumerPlugin(proxy.RpcProxy):
                                      "state":payload.get('state'),
                                      "created_at":payload.get('created_at'),
                                      "reservation_id":payload.get('reservation_id'),
+                                     "zone":payload.get('zone'),
                                      "type":type,
                                     }
                 }

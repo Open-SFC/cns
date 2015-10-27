@@ -69,6 +69,9 @@ class VirtualMachine(_Base):
     type = BoundedStr(maxlen=50)
     "Virtual Machine Type"
 
+    zone = BoundedStr(maxlen=50)
+    "Application Zone name"
+
 
 class VirtualMachinesResp(_Base):
     """
@@ -90,6 +93,7 @@ class VMController(BaseController):
         'tenant': ['tenant', {'type': 'string', 'mandatory': True}],
         'type': ['type', {'type': 'string', 'mandatory': True}],
         'switch': ['host', {'type': 'string', 'mandatory': True}],
+        'zone': ['zone', {'type': 'string', 'mandatory': True}]
     }
     dmpath = 'crm.virtualmachine'
     attributes = AttributeController(dmpath)
